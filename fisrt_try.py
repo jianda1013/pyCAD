@@ -138,7 +138,7 @@ def pri():
 			y = float(y_input.get())
 			radius = float(rad_input.get())
 			start = arc_select.get()
-			cad.CIR(x, y, radius, start)
+			cad.QUA(x, y, radius, start)
 			x_frame.destroy()
 			y_frame.destroy()
 			rad_frame.destroy()
@@ -171,6 +171,7 @@ def pri():
 		arc_text = tk.Label(arc_frame, text=" 圓弧位置 ")
 		arc_text.grid(column=0, row=5)
 		arc_select = ttk.Combobox(arc_frame, values=["右上","左上","左下","右下"], state='readonly')
+		arc_select.grid(column=1, row=5)
 		toCAD = tk.Button(window, text='確認送出', command=output)
 		toCAD.grid(column=1, row=6)
 
@@ -185,7 +186,6 @@ cad_label = tk.Label(window, text='autocad')
 cad_label.grid(column=0, row=0)
 
 selection = ttk.Combobox(window, values=["直線","長方形","圓形","四分之一圓"], state='readonly')
-
 selection.grid(column=0, row=1)
 selection.current(0)
 
