@@ -18,16 +18,12 @@ def list_layer():
 
 def switch(name):
 	acad.ActiveDocument.ActiveLayer = acad.ActiveDocument.Layers.Add(name)
-	acad.ActiveDocument.Sendcommand("'_.-la"+chr(13)+"_on"+chr(13)+"="+name+chr(13)+chr(13))
-	for i in range(count):
-		if(layers_names[i] != name):
-			acad.ActiveDocument.Sendcommand("'_.-la"+chr(13)+"_off"+chr(13)+"="+layers_names[i]+chr(13)+chr(13))
-	# '_.-la _off =name
 
-def recover():
-	for i in range(count):
-		acad.ActiveDocument.Sendcommand("'_.-la"+chr(13)+"_on"+chr(13)+"="+layers_names[i]+chr(13)+chr(13))
-
+def set_hatch(name):
+	acad.ActiveDocument.Sendcommand("hpname"+chr(13)+name+chr(13))
 
 def hatch():
 	acad.ActiveDocument.Sendcommand("h"+chr(13))
+
+def bound():
+	acad.ActiveDocument.Sendcommand()
