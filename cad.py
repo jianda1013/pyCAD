@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
 
 from pyautocad import Autocad, APoint
-import math
+from openpyxl import Workbook
 
 acad = Autocad(create_if_not_exists=True)
 acad.prompt("Hello, Autocad from Python\n")
 print(acad.doc.Name)
 
+wb = Workbook()
+ws = wb.active
+ws['A1'] = '圖層'
+ws['B1'] = '材質'
+ws['C1'] = '面積'
 
 def list_layer():
 	return [acad.ActiveDocument.Layers.Item(i).Name for i in range(acad.ActiveDocument.Layers.Count)]
@@ -21,10 +26,9 @@ def hatch():
 	acad.ActiveDocument.Sendcommand("h"+chr(13))
 
 def cal():
-	arr = []
 	for obj in acad.iter_objects("Hatch"):
 		if(obj.Layer == acad.ActiveDocument.ActiveLayer.Name):
-			arr.append(obj.Area)
+			ws.append([obj.Layer, obj.PatternName, obj.Area])
 
 	for obj in acad.iter_objects("PolyLine"):
 		if(obj.Layer == acad.ActiveDocument.ActiveLayer.Name):
@@ -33,4 +37,5 @@ def cal():
 			start = str(x)+','+str(y)
 			end = str(x)+','+str(y*2)
 			acad.ActiveDocument.Sendcommand("mleader"+chr(13)+start+chr(13)+end+chr(13))
-	print(arr)
+def exit():
+	wb.save('info.xlsx')

@@ -11,68 +11,71 @@ hatch_list = ["SOLID", "ANGLE", "ANSI31", "ANSI32", "ANSI33", "ANSI34",
 "CROSS", "DASH", "DOLMIT", "DOTS", "EARTH", "ESCHER", "FLEX", "GOST_GLASS", 
 "GOST_GROUND", "GOST_WOOD"]
 
-def hide():
-	but_frame.grid_forget()
+def layer():
+	layer_frame = tk.Frame(window)
+	layer_frame.grid(column=0, row=0)
 
-def show():
-	but_frame.grid()
+	layer_text = tk.Label(layer_frame, text='選擇所取圖層')
+	layer_text.grid(column=0, row=0)
+
+	layer_selection = ttk.Combobox(layer_frame, values=cad.list_layer(), state='readonly')
+	layer_selection.grid(column=0, row=1)
+
+	layer_send = tk.Button(layer_frame, text='確認送出', command=lambda: [cad.switch(layer_selection.get()), layer_frame.destroy(), hch()])
+	layer_send.grid(column=1, row=1)
+
+	layer_new = tk.Button(layer_frame, text='開新圖層', command=lambda: [layer_frame.destroy(), nlayer()])
+	layer_new.grid(column=0, row=2, padx=10, pady=0)
+
+	layer_exit = tk.Button(layer_frame, text='結束並儲存', command=lambda: cad.exit())
+	layer_exit.grid(column=1, row=3, padx=20, pady=10)
 
 def nlayer():
-	def end():
-		nlayer_frame.destroy()
-		hch()
 
-	hide()
 	nlayer_frame = tk.Frame(window)
 	nlayer_frame.grid(column=0, row=0)
 
-	nlayer_name = tk.Label(nlayer_frame, text='新圖層名稱')
-	nlayer_name.grid(column=0, row=0)
+	nlayer_text = tk.Label(nlayer_frame, text='新圖層名稱')
+	nlayer_text.grid(column=0, row=0)
 
 	nlayer_create = tk.Entry(nlayer_frame)
 	nlayer_create.grid(column=0, row=1)
 
-	nlayer_send = tk.Button(nlayer_frame, text='確認送出', command=lambda: [cad.switch(nlayer_create.get()),end()])
+	nlayer_send = tk.Button(nlayer_frame, text='確認送出', command=lambda: [cad.switch(nlayer_create.get()), nlayer_frame.destroy(), hch()])
 	nlayer_send.grid(column=1, row=1)
 
-def hch():
-	def end():
-		cad.cal()
-		hch_frame.destroy()
-		show()
+	nlayer_back = tk.Button(nlayer_frame, text='返回', command=lambda: [nlayer_frame.destroy(), layer()])
+	nlayer_back.grid(column=1, row=2)
 
-	hide()
+def hch():
 
 	hch_frame = tk.Frame(window)
 	hch_frame.grid(column=0, row=0)
 
-	hch_choose = tk.Label(hch_frame, text="選取填充樣式")
-	hch_choose.grid(column=0, row=0, padx=30, pady=10)
+	hch_text = tk.Label(hch_frame, text='選取填充樣式')
+	hch_text.grid(column=0, row=0)
 
 	hch_select = ttk.Combobox(hch_frame, values=hatch_list, state='readonly')
-	hch_select.grid(column=0, row=1, padx=10, pady=10)
+	hch_select.grid(column=0, row=1)
 
-	hch_send = tk.Button(hch_frame, text='確認送出', command=lambda: [cad.set_hatch(hch_select.get()) ,cad.hatch(), end()])
-	hch_send.grid(column=1, row=1, padx=5, pady=10)
+	hch_send = tk.Button(hch_frame, text='確認送出', command=lambda: [cad.set_hatch(hch_select.get()) ,cad.hatch(), hch_frame.destroy(), comment()])
+	hch_send.grid(column=1, row=1)
+
+	hch_back = tk.Button(hch_frame, text='返回', command=lambda: [hch_frame.destroy(), layer()])
+	hch_back.grid(column=1, row=2)
+
+def comment():
+	comment_frame = tk.Frame(window)
+	comment_frame.grid(column=0, row=0)
+
+	comment_text = tk.Button(comment_frame, text='確認完成邊界處理', command=lambda: [comment_frame.destroy(), cad.cal(), layer()])
+	comment_text.grid(column=0, row=0, padx=10, pady=10)
 
 window = tk.Tk()
 window.title('CAD_UI')
-window.geometry('250x100')
+window.geometry('280x130')
 window.configure(background='white')
 
-but_frame = tk.Frame(window)
-but_frame.grid(column=0, row=0)
-
-to_layer = tk.Label(but_frame, text='選擇圖層')
-to_layer.grid(column=0, row=0,)
-
-layer_selection = ttk.Combobox(but_frame, values=cad.list_layer(), state='readonly')
-layer_selection.grid(column=0, row=1)
-
-layer_send = tk.Button(but_frame, text='確認送出', command=lambda: [cad.switch(layer_selection.get()),hch()])
-layer_send.grid(column=1, row=1)
-
-layer_new = tk.Button(but_frame, text='創建新圖層', command=nlayer)
-layer_new.grid(column=0, row=2, padx=30)
+layer()
 
 window.mainloop()
