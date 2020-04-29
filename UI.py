@@ -4,24 +4,32 @@ import tkinter as tk
 from tkinter import ttk
 import cad
 
-hatch_list = ["SOLID", "ANGLE", "ANSI31", "ANSI32", "ANSI33", "ANSI34", 
-"ANSI35", "ANSI36", "ANSI37", "ANSI38", "AR-B816", "AR-B816C", "AR-B88", 
-"AR-BRELM", "AR-BRSTD", "AR-CONC", "AR-HBONE", "AR-PARQ1", "AR-RROOF", 
-"AR-RSHKE", "AR-SAND", "BOX", "BRASS", "BRICK", "BRSTONE", "CLAY", "CORK", 
-"CROSS", "DASH", "DOLMIT", "DOTS", "EARTH", "ESCHER", "FLEX", "GOST_GLASS", 
+hatch_list = ["ANGLE", "ANSI31", "ANSI32", "ANSI33", "ANSI34", "ANSI37",
+"AR-RROOF", "BOX", "BRASS", "BRICK", "BRSTONE", "CLAY", 
+"CROSS","DOLMIT", "DOTS", "EARTH", "ESCHER", "FLEX", "GOST_GLASS", 
 "GOST_GROUND", "GOST_WOOD"]
 
+material_list = []
+
 def layer():
+
+	lst = cad.list_layer()
+	def send():
+		cad.switch(layer_selection.get())
+		layer_frame.destroy()
+		hch()
+
 	layer_frame = tk.Frame(window)
 	layer_frame.grid(column=0, row=0)
 
 	layer_text = tk.Label(layer_frame, text='選擇所取圖層')
 	layer_text.grid(column=0, row=0)
 
-	layer_selection = ttk.Combobox(layer_frame, values=cad.list_layer(), state='readonly')
+	layer_selection = ttk.Combobox(layer_frame, values=lst, state='readonly')
 	layer_selection.grid(column=0, row=1)
+	layer_selection.current(0)
 
-	layer_send = tk.Button(layer_frame, text='確認送出', command=lambda: [cad.switch(layer_selection.get()), layer_frame.destroy(), hch()])
+	layer_send = tk.Button(layer_frame, text='確認送出', command=send)
 	layer_send.grid(column=1, row=1)
 
 	layer_new = tk.Button(layer_frame, text='開新圖層', command=lambda: [layer_frame.destroy(), nlayer()])
@@ -49,20 +57,49 @@ def nlayer():
 
 def hch():
 
+	def send(num):
+		cad.set_hatch(hatch_list[num])
+		cad.hatch()
+		hch_frame.destroy()
+		comment()
+
 	hch_frame = tk.Frame(window)
 	hch_frame.grid(column=0, row=0)
 
-	hch_text = tk.Label(hch_frame, text='選取填充樣式')
+	hch_text = tk.Label(hch_frame, text='選取材質')
 	hch_text.grid(column=0, row=0)
 
-	hch_select = ttk.Combobox(hch_frame, values=hatch_list, state='readonly')
+	hch_select = ttk.Combobox(hch_frame, values=material_list, state='readonly')
 	hch_select.grid(column=0, row=1)
+	hch_select.current(0)
 
-	hch_send = tk.Button(hch_frame, text='確認送出', command=lambda: [cad.set_hatch(hch_select.get()) ,cad.hatch(), hch_frame.destroy(), comment()])
+	hch_send = tk.Button(hch_frame, text='確認送出', command=lambda: [send(hch_select.current())])
 	hch_send.grid(column=1, row=1)
+
+	hch_mtl = tk.Button(hch_frame, text='新增材質', command=lambda: [hch_frame.destroy(), mtl()])
+	hch_mtl.grid(column=0, row=2)
 
 	hch_back = tk.Button(hch_frame, text='返回', command=lambda: [hch_frame.destroy(), layer()])
 	hch_back.grid(column=1, row=2)
+
+def mtl():
+
+	def send(name):
+		material_list.append(name)
+		mtl_frame.destroy()
+		hch()
+
+	mtl_frame = tk.Frame(window)
+	mtl_frame.grid(column=0, row=0)
+
+	mtl_text = tk.Label(mtl_frame, text='輸入材質')
+	mtl_text.grid(column=0, row=0)
+
+	mtl_name = tk.Entry(mtl_frame)
+	mtl_name.grid(column=0, row=1)
+
+	mtl_send = tk.Button(mtl_frame, text='確認送出', command=lambda: [send(mtl_name.get())])
+	mtl_send.grid(column=1, row=1)
 
 def comment():
 	comment_frame = tk.Frame(window)
