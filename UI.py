@@ -52,7 +52,7 @@ def comment(num):
 	comment_frame.configure(background='white')
 
 	comment_text = tk.Button(comment_frame, text='邊界處理完成', command=lambda: [comment_frame.destroy(), cad.cal(num), layer()])
-	comment_text.grid(column=0, row=0, padx=10, pady=10)
+	comment_text.grid(column=0, row=0, padx=95, pady=30)
 	comment_text.configure(background='white')
 
 window = tk.Tk()
