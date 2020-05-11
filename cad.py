@@ -6,6 +6,7 @@ acad = Autocad(create_if_not_exists=True)
 wb = Workbook()
 ws = wb.active
 
+
 def total_area():
 	x = 0
 	y = 0
@@ -24,7 +25,7 @@ def total_area():
 
 start_pos = []
 end_pos = []
-
+now = 0
 for obj in acad.iter_objects("block"):
 	if(obj.name == "圖框50%"):
 		start_pos.append(str(int(obj.insertionpoint[0])-5)+','+str(int(obj.insertionpoint[1])-5))
@@ -58,17 +59,17 @@ for i in range(len(start_pos)):
 
 	area_lst[2] = area
 
-	dic = {}
-
 	for i in range(len(lst)):
 		if "壁紙" in lst[i]:
-			dic[lst[i]] = area_lst[2]
+			ws.append([now, lst[i], area_lst[2]])
 		elif "鏡" in lst[i]:
-			dic[lst[i]] = area_lst[1]
+			ws.append([now, lst[i], area_lst[1]])
 		elif "門片" in lst[i]:
-			dic[lst[i]] = area_lst[0]
+			ws.append([now, lst[i], area_lst[0]])
+		else:
+			ws.append([now, lst[i], "?"])
 
-	print(dic)
 	acad.ActiveDocument.SendCommand("u"+chr(13)+"u"+chr(13)+"u"+chr(13))
+	now += 1
 
 wb.save('temp.xlsx')
