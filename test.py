@@ -1,6 +1,4 @@
-from pyautocad import Autocad
+st = "一二三四五六七八"
 
-acad = Autocad(create_if_not_exists=True)
-
-for obj in acad.iter_objects("hatch"):
-	print(obj.ID)
+if "八八八" in st:
+	print("a")
