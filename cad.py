@@ -1,43 +1,67 @@
-# -*- coding: utf-8 -*-
-
-from pyautocad import Autocad, APoint
-from openpyxl import Workbook
+from pyautocad import Autocad
+import time
+#import cad
 
 acad = Autocad(create_if_not_exists=True)
-acad.prompt("Hello, Autocad from Python\n")
-print(acad.doc.Name)
+acad.prompt("LUL")
+def total_area():
+	x = 0
+	y = 0
+	for obj in acad.iter_objects("line"):
+		if(obj.layer == "WALL"):
+			try:
+				tmpx = int(abs(obj.delta[0]))
+				tmpy = int(abs(obj.delta[1]))
+				if(tmpx > x):
+					x = tmpx
+				if(tmpy > y):
+					y = tmpy
+			except:
+				continue
+	return x*y
+start_pos = []
+end_pos = []
+for obj in acad.iter_objects("block"):
+	if(obj.name == "圖框50%"):
+		start_pos.append(str(int(obj.insertionpoint[0])-5)+','+str(int(obj.insertionpoint[1])-5))
+		end_pos.append(str(int(obj.insertionpoint[0]+1230))+','+str(int(obj.insertionpoint[1]+905)))	
 
-wb = Workbook()
-ws = wb.active
-ws['A1'] = '主項大廳'
-ws['B1'] = '細項品名'
-ws['C1'] = '面積'
 
-mat = ['灰鏡', '茶鏡', '門片', '上修門片']
+for i in range(len(start_pos)):
+	acad.ActiveDocument.SendCommand("u"+chr(13)+"u"+chr(13)+"u"+chr(13)+"u"+chr(13))
+	print(start_pos[i], end_pos[i])
+	acad.ActiveDocument.SendCommand("copyclip"+chr(13)+start_pos[i]+chr(13)+end_pos[i]+chr(13)+chr(13))
+	time.sleep(3)
+	acad.ActiveDocument.SendCommand("erase"+chr(13)+"all"+chr(13)+chr(13))
+	acad.ActiveDocument.SendCommand("pasteclip"+chr(13)+"14338,-4496"+chr(13))
+	time.sleep(3)
+'''
+		lst = []
+		for obj in acad.iter_objects("mleader"):
+			if(obj.layer == "標注01-文字"):
+				if obj.textstring not in lst:
+					lst.append(obj.textstring)
+		print(lst)
 
-def switch(name):
-	acad.ActiveDocument.ActiveLayer = acad.ActiveDocument.Layers.Add(name)
+		area_lst = [0, 0, 0]
+	#	["8 -> 門片", "hatch[AR-RROOF] -> 灰鏡", "last -> 面貼壁紙"]
+		area = total_area()
+		for obj in acad.iter_objects("polyline"):
+			if(obj.layer == "8"):
+				area_lst[0] += int(obj.area*2)
+				area -= int(obj.area*2)
+			elif(obj.layer == "WINDOW"):
+				if(obj.closed == True):
+					area -= int(obj.area)
+			elif(obj.layer == "平-活動家具"):
+				area -= int(obj.area)
 
-def set_hatch(name):
-	acad.ActiveDocument.Sendcommand("hpname"+chr(13)+name+chr(13))
+		for obj in acad.iter_objects("hatch"):
+			area -= int(obj.area)
+			if(obj.patternname == "AR-RROOF"):
+				area_lst[1] += int(obj.area)
 
-def hatch():
-	acad.ActiveDocument.Sendcommand("h"+chr(13))
-
-def cal(num):
-	for obj in acad.iter_objects("Hatch"):
-		if(obj.Layer == acad.ActiveDocument.ActiveLayer.Name):
-			ws.append([obj.Layer, mat[num], obj.Area])
-			if(num == 2):
-				obj.erase()
-
-	for obj in acad.iter_objects("PolyLine"):
-		if(obj.Layer == acad.ActiveDocument.ActiveLayer.Name):
-			x = (obj.Coordinates[0] + obj.Coordinates[2] + obj.Coordinates[4] + obj.Coordinates[6])/4
-			y = (obj.Coordinates[1] + obj.Coordinates[3] + obj.Coordinates[5] + obj.Coordinates[7])/4
-			start = str(x)+','+str(y)
-			end = str(x)+',-4104'
-			acad.ActiveDocument.Sendcommand("mleader"+chr(13)+start+chr(13)+end+chr(13))
-			break
-def exit():
-	wb.save('info.xlsx')
+		area_lst[2] = area
+		print(area_lst)
+		'''
+		#acad.ActiveDocument.SendCommand("u"+chr(13)+"u"+chr(13)+"u"+chr(13)+"u"+chr(13))
